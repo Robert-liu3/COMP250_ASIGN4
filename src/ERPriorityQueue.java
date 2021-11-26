@@ -45,21 +45,42 @@ public class ERPriorityQueue{
 	}
 
 	public void downHeap(int i){
-        // TODO: Implement your code here
+		int tmp = 0;
+        while (2*i <= patients.size()) {
+			tmp = 2*i;
+			if (tmp < patients.size()) { //don't understand this if statement
+				if (patients.get(tmp + 1).getPriority() < patients.get(tmp).getPriority()) {
+					tmp ++;
+				}
+			}
+			if ( patients.get(tmp).getPriority() < patients.get(i).getPriority()) {
+				swap(i, tmp);
+				i = tmp;
+			}
+			else return;
+		}
 	}
 
 	public boolean contains(String name){
-        // TODO: Implement your code here & remove return statement
+		for (Patient e: patients) {
+			if (e.getName().equals(name)) {
+				return true;
+			}
+		}
         return false;
 	}
 
 	public double getPriority(String name){
-        // TODO: Implement your code here & remove return statement
+        for (Patient e:patients) {
+			if (e.getName().equals(name)) {
+				return e.getPriority();
+			}
+		}
         return -1;
 	}
 
 	public double getMinPriority(){
-        // TODO: Implement your code here & remove return statement
+
         return -1;
 	}
 
