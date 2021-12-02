@@ -36,7 +36,7 @@ public class ERPriorityQueue{
 	}
 
 	public void upHeap(int i){
-		while ((i > 1) && (patients.get(i).getPriority() > patients.get(parent(i)).getPriority())) {
+		while ((i > 1) && (patients.get(i).getPriority() < patients.get(parent(i)).getPriority())) {
 			swap(i, parent(i));
 			i = parent(i);
 			//TODO: unknow specifications in pdf?
@@ -49,7 +49,7 @@ public class ERPriorityQueue{
         while (leftChild(i) <= patients.size()) {
 			tmp = leftChild(i);
 			if (tmp < patients.size()) { //don't understand this if statement
-				if (patients.get(rightChild(i)).getPriority() > patients.get(tmp).getPriority()) {
+				if (patients.get(rightChild(tmp)).getPriority() < patients.get(tmp).getPriority()) {
 					tmp ++;
 				}
 			}
@@ -80,8 +80,10 @@ public class ERPriorityQueue{
 	}
 
 	public double getMinPriority(){
-
-        return -1;
+		if (patients.size() == 0 && patients.size() == 1) return -1;
+		else {
+			return patients.get(1).getPriority();
+		}
 	}
 
 	public String removeMin(){
@@ -90,9 +92,9 @@ public class ERPriorityQueue{
 	}
 
 	public String peekMin(){
-        if (patients.size() == 0) return null;
+        if (patients.size() == 0 && patients.size() == 1) return null;
 		else {
-
+			return patients.get(1).getName();
 		}
 	}
 
