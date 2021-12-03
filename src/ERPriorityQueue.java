@@ -31,8 +31,29 @@ public class ERPriorityQueue{
 
    	private void swap(int i, int j) { //swap two elements, helper function
 		Patient tmp = patients.get(i);
+		nameToIndex.remove(patients.get(i).getName());
+		nameToIndex.remove(patients.get(j).getName());
+		nameToIndex.put(patients.get(j).getName(), i);
+		nameToIndex.put(patients.get(i).getName(), j);
 		patients.set(i, patients.get(j));
 		patients.set(j, tmp);
+	}
+
+	private boolean isEmpty() {
+		if (patients.size() == 0) {
+			return true;
+		}
+		else if (patients.size() == 1 && patients.get(0).getPriority() == 0 ){
+			return true;
+		}
+		else return false;
+	}
+
+	private boolean isLeaf(int i) {
+		if (patients.get(leftChild(i)) == null && patients.get(rightChild(i)) == null) {
+			return true;
+		}
+		return false;
 	}
 
 	public void upHeap(int i){
@@ -45,11 +66,12 @@ public class ERPriorityQueue{
 	}
 
 	public void downHeap(int i){
+		int size = patients.size()-1;
 		int tmp = 0;
-        while (leftChild(i) <= patients.size()) {
+        while (leftChild(i) <= size) {
 			tmp = leftChild(i);
-			if (tmp < patients.size()) { //don't understand this if statement
-				if (patients.get(rightChild(tmp)).getPriority() < patients.get(tmp).getPriority()) {
+			if (tmp < size) { //don't understand this if statement
+				if (patients.get(rightChild(i)).getPriority() < patients.get(tmp).getPriority()) {
 					tmp ++;
 				}
 			}
@@ -62,44 +84,56 @@ public class ERPriorityQueue{
 	}
 
 	public boolean contains(String name){
-		for (Patient e: patients) {
-			if (e.getName().equals(name)) {
-				return true;
-			}
-		}
-        return false;
+		if (nameToIndex.containsKey(name)) {
+			return true;
+		} return false;
 	}
 
 	public double getPriority(String name){
-        for (Patient e:patients) {
-			if (e.getName().equals(name)) {
-				return e.getPriority();
-			}
+		if (isEmpty()) {
+			return -1;
 		}
-        return -1;
+		else {
+			for (Patient e : patients) {
+				if (e.getName().equals(name)) {
+					return e.getPriority();
+				}
+			}
+			return -1;
+		}
 	}
 
 	public double getMinPriority(){
-		if (patients.size() == 0 && patients.size() == 1) return -1;
+		if (isEmpty()) {
+			return -1;
+		}
 		else {
 			return patients.get(1).getPriority();
 		}
 	}
 
 	public String removeMin(){
-		if (patients.size() == 0 && patients.size() == 1) return null;
-		else {
-			int i = 0;
-			Patient tmp = patients.get(1);
-			patients.set(1, patients.get(patients.size()));
-			i = patients.size() - 1;
-			downHeap(i);
-			return tmp.getName();
+		if (isEmpty()) {
+			return null;
 		}
+//		else if (patients.size()==2) {
+//			Patient tmp = patients.get(1);
+//			nameToIndex.remove(patients.get(1).getName());
+//			patients.remove(patients.get(1));
+//			return tmp.getName();
+//		}
+//		else {
+			Patient tmp = patients.get(1);
+			removeByIndex(1);
+
+			return tmp.getName();
+//		}
 	}
 
 	public String peekMin(){
-        if (patients.size() == 0 && patients.size() == 1) return null;
+		if (isEmpty()) {
+			return null;
+		}
 		else {
 			return patients.get(1).getName();
 		}
@@ -112,19 +146,71 @@ public class ERPriorityQueue{
 	 * If the name is already there, then return false.
 	 */
 
-	public boolean  add(String name, double priority){
-         
-        return false;
+	public boolean add(String name, double priority){
+		Patient newPatient = new Patient(name, priority);
+		if (contains(name)) {
+			return false;
+		} else {
+			nameToIndex.put(name, patients.size());
+			patients.add(newPatient);
+			upHeap(patients.size() - 1);
+		}
+		return true;
 	}
 
-	public boolean  add(String name){
-        // TODO: Implement your code here
-		return false;
+	public boolean add(String name){
+		Patient newPatient = new Patient(name, Double.POSITIVE_INFINITY);
+		if (contains(name)) {
+			return false;
+		} else {
+			nameToIndex.put(name, patients.size());
+			patients.add(newPatient);
+			upHeap(patients.size() - 1);
+
+		}
+		return true;
 	}
 
 	public boolean remove(String name){
-        // TODO: Implement your code here
+		if (isEmpty()) {
+			return false;
+		} else {
+			int tmp = 0;
+			if (contains(name)) {
+				tmp = nameToIndex.get(name);
+				removeByIndex(tmp);
+				return true;
+			}
+		}
         return false;
+	}
+	public void removeByIndex(int i) {
+		if (isEmpty()) {
+			return;
+		}
+		if (patients.size() == 2) {
+
+			Patient tmp = patients.get(1);
+
+			nameToIndex.remove(patients.get(1).getName());
+			patients.remove(patients.get(1));
+
+		} else if (i == patients.size()-1) {
+
+			nameToIndex.remove(patients.get(patients.size()-1).getName());
+			patients.remove(patients.get(patients.size()-1));
+
+		}else {
+			Patient tmp2 = patients.get(patients.size() - 1);
+
+			patients.remove(patients.get(patients.size() - 1));
+			nameToIndex.remove(patients.get(i).getName());
+
+			nameToIndex.put(tmp2.getName(), 1);
+			patients.set(i, tmp2);
+
+			downHeap(i);
+		}
 	}
 
 	/*
@@ -134,7 +220,13 @@ public class ERPriorityQueue{
 	 */
 
 	public boolean changePriority(String name, double priority){
-        // TODO: Implement your code here & remove return statement
+        if (contains(name)) {
+			int tmp = nameToIndex.get(name);
+			patients.get(tmp).setPriority(priority);
+			upHeap(tmp);
+			downHeap(tmp);
+			return true;
+		}
         return false;
 	}
 
