@@ -50,7 +50,7 @@ public class ERPriorityQueue{
 	}
 
 	private boolean isLeaf(int i) {
-		if (patients.get(leftChild(i)) == null && patients.get(rightChild(i)) == null) {
+		if (leftChild(i) >= patients.size() && rightChild(i) >= patients.size()) {
 			return true;
 		}
 		return false;
@@ -188,14 +188,15 @@ public class ERPriorityQueue{
 		if (isEmpty()) {
 			return;
 		}
-		if (patients.size() == 2) {
-
-			Patient tmp = patients.get(1);
-
-			nameToIndex.remove(patients.get(1).getName());
-			patients.remove(patients.get(1));
-
-		} else if (i == patients.size()-1) {
+//		if (patients.size() == 2) {
+//
+//			Patient tmp = patients.get(1);
+//
+//			nameToIndex.remove(patients.get(1).getName());
+//			patients.remove(patients.get(1));
+//
+//		} else
+			if (i == patients.size()-1) {
 
 			nameToIndex.remove(patients.get(patients.size()-1).getName());
 			patients.remove(patients.get(patients.size()-1));
@@ -206,7 +207,7 @@ public class ERPriorityQueue{
 			patients.remove(patients.get(patients.size() - 1));
 			nameToIndex.remove(patients.get(i).getName());
 
-			nameToIndex.put(tmp2.getName(), 1);
+			nameToIndex.put(tmp2.getName(), i);
 			patients.set(i, tmp2);
 
 			downHeap(i);
@@ -231,13 +232,24 @@ public class ERPriorityQueue{
 	}
 
 	public ArrayList<Patient> removeUrgentPatients(double threshold){
-        // TODO: Implement your code here & remove return statement
-        return null;
+        ArrayList<Patient> urgentPatients = new ArrayList<Patient>();
+		while (getMinPriority() <= threshold) {
+			urgentPatients.add(patients.get(1));
+			removeMin();
+		}
+        return urgentPatients;
 	}
 
 	public ArrayList<Patient> removeNonUrgentPatients(double threshold){
-        // TODO: Implement your code here & remove return statement
-        return null;
+		ArrayList<Patient> nonUrgentPatients = new ArrayList<Patient>();
+		for (int i = 1; i < patients.size(); i++) {
+			if (patients.get(i).getPriority() >= threshold) {
+				nonUrgentPatients.add(patients.get(i));
+				removeByIndex(i);
+				i --;
+			}
+		}
+		return nonUrgentPatients;
 	}
 
 
