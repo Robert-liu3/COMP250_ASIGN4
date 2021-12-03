@@ -87,8 +87,15 @@ public class ERPriorityQueue{
 	}
 
 	public String removeMin(){
-        // TODO: Implement your code here & remove return statement
-        return null;
+		if (patients.size() == 0 && patients.size() == 1) return null;
+		else {
+			int i = 0;
+			Patient tmp = patients.get(1);
+			patients.set(1, patients.get(patients.size()));
+			i = patients.size() - 1;
+			downHeap(i);
+			return tmp.getName();
+		}
 	}
 
 	public String peekMin(){
@@ -106,7 +113,7 @@ public class ERPriorityQueue{
 	 */
 
 	public boolean  add(String name, double priority){
-        // TODO: Implement your code here & remove return statement
+         
         return false;
 	}
 
