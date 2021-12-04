@@ -233,7 +233,7 @@ public class ERPriorityQueue{
 
 	public ArrayList<Patient> removeUrgentPatients(double threshold){
         ArrayList<Patient> urgentPatients = new ArrayList<Patient>();
-		while (getMinPriority() <= threshold) {
+		while (!isEmpty() && getMinPriority() <= threshold) {
 			urgentPatients.add(patients.get(1));
 			removeMin();
 		}
@@ -243,6 +243,9 @@ public class ERPriorityQueue{
 	public ArrayList<Patient> removeNonUrgentPatients(double threshold){
 		ArrayList<Patient> nonUrgentPatients = new ArrayList<Patient>();
 		for (int i = 1; i < patients.size(); i++) {
+			if (isEmpty()) {
+				return nonUrgentPatients;
+			}
 			if (patients.get(i).getPriority() >= threshold) {
 				nonUrgentPatients.add(patients.get(i));
 				removeByIndex(i);
